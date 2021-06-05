@@ -13,7 +13,6 @@ function getFiltered(gridState) {
 
 export default {
   Cell: HighlightCell,
-  filterable: true,
   filterMethod: containsInsensitive,
   getProps: getFiltered,
 };

@@ -9,9 +9,23 @@ import FormProvider from './FormProvider';
 import ActionsCell from './ActionsCell';
 import HighlightCell from './HighlightCell';
 import GridFilters from './GridFilters';
+import Filter from './Filter/Filter';
 
 class TableComponent extends Component {
-  state = { data: initialData, editing: null };
+  constructor(props) {
+    super(props);
+    this.state = { data: initialData, editing: null, deleting: null, isFilterEnabled: false };
+  }
+
+  handleInputChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  handleSearch = () => {
+    this.setState({ isFilterEnabled: true });
+  };
 
   editableComponent = ({ input, editing, value, ...rest }) => {
     const Component = editing ? BS.FormControl : BS.FormControl.Static;
@@ -45,13 +59,24 @@ class TableComponent extends Component {
 
   getActionProps = (gridState, rowProps) =>
     (rowProps && {
-      mode: this.state.editing === rowProps.original ? 'edit' : 'view',
+      mode:
+        this.state.deleting === rowProps.original
+          ? 'delete'
+          : this.state.editing === rowProps.original
+          ? 'edit'
+          : 'view',
       actions: {
         onEdit: () =>
           this.setState({ editing: rowProps.original }, () =>
             console.log('editing', this.state.editing),
           ),
-        onCancel: () => this.setState({ editing: null }),
+        onDelete: () => {
+          this.setState({ deleting: rowProps.original });
+          let data_ = this.state.data;
+          data_.splice(rowProps.index, 1);
+          this.setState({ data: data_ });
+        },
+        onCancel: () => this.setState({ editing: null, deleting: null }),
       },
     }) ||
     {};
@@ -69,6 +94,13 @@ class TableComponent extends Component {
   };
 
   columns = [
+    {
+      Header: '',
+      maxWidth: 300,
+      filterable: false,
+      getProps: this.getActionProps,
+      Cell: ActionsCell,
+    },
     {
       Header: this.renderHeader('BVD9 ID'),
       accessor: 'bvd9Id',
@@ -111,13 +143,6 @@ class TableComponent extends Component {
       ...this.editableColumnProps,
     },
     { Header: this.renderHeader('Comments'), accessor: 'comments', ...this.editableColumnProps },
-    {
-      Header: '',
-      maxWidth: 200,
-      filterable: false,
-      getProps: this.getActionProps,
-      Cell: ActionsCell,
-    },
   ];
 
   handleSubmit = (values) => {
@@ -133,37 +158,42 @@ class TableComponent extends Component {
   render() {
     return (
       <>
-        <FormProvider
-          form="inline"
-          onSubmit={this.handleSubmit}
-          onSubmitSuccess={() => this.setState({ editing: null })}
-          initialValues={this.state.editing}
-          enableReinitialize
-        >
-          {(formProps) => {
-            return (
-              <form onSubmit={formProps.handleSubmit}>
-                <Table
-                  columns={this.columns}
-                  data={this.state.data}
-                  defaultPageSize={5}
-                  className="-striped -highlight"
-                />
-              </form>
-            );
-          }}
-        </FormProvider>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px' }}>
-          <Button type="submit" variant="contained" color="default" style={{ marginRight: 10 }}>
-            Edit All
-          </Button>
-          <Button type="submit" variant="contained" color="primary" style={{ marginRight: 10 }}>
-            Save All
-          </Button>
-          <Button type="submit" variant="contained" color="secondary">
-            Submit All
-          </Button>
-        </div>
+        <Filter handleSearch={this.handleSearch} handleInputChange={this.handleInputChange} />
+        {this.state.isFilterEnabled && (
+          <>
+            <FormProvider
+              form="inline"
+              onSubmit={this.handleSubmit}
+              onSubmitSuccess={() => this.setState({ editing: null })}
+              initialValues={this.state.editing}
+              enableReinitialize
+            >
+              {(formProps) => {
+                return (
+                  <form onSubmit={formProps.handleSubmit}>
+                    <Table
+                      columns={this.columns}
+                      data={this.state.data}
+                      defaultPageSize={5}
+                      className="-striped -highlight"
+                    />
+                  </form>
+                );
+              }}
+            </FormProvider>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px' }}>
+              <Button type="submit" variant="contained" color="default" style={{ marginRight: 10 }}>
+                Edit All
+              </Button>
+              <Button type="submit" variant="contained" color="primary" style={{ marginRight: 10 }}>
+                Save All
+              </Button>
+              <Button type="submit" variant="contained" color="secondary">
+                Submit All
+              </Button>
+            </div>
+          </>
+        )}
       </>
     );
   }

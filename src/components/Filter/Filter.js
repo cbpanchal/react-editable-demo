@@ -1,23 +1,23 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import React from "react";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
   filterContainer: {
-    padding: '30px 0',
+    padding: "30px 0",
   },
   form: {
     margin: 20,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
   textField: {
     marginRight: 20,
   },
   filterTitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 20,
     marginBottom: 30,
   },
@@ -40,6 +40,7 @@ const Filter = ({ handleSearch, handleInputChange }) => {
           id="outlined-basic"
           label="BVD9 ID"
           variant="outlined"
+          type="number"
         />
         <TextField
           className={classes.textField}

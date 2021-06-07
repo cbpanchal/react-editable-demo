@@ -207,7 +207,7 @@ class TableComponent extends Component {
           handleSearch={this.handleSearch}
           handleInputChange={this.handleInputChange}
         />
-        {!this.state.isFilterEnabled && (
+        {this.state.isFilterEnabled && (
           <BS.Panel bsStyle="primary">
             <FormProvider
               form="inline"

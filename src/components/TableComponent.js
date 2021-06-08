@@ -12,6 +12,7 @@ import GridFilters from "./GridFilters";
 import Filter from "./Filter/Filter";
 
 import { headerStyle, rowStyle } from "./styles/tableStyle";
+import { bvd9IdPattern } from "./helper";
 
 class TableComponent extends Component {
   constructor(props) {
@@ -21,10 +22,32 @@ class TableComponent extends Component {
       editing: null,
       deleting: null,
       isFilterEnabled: false,
+      bvd9Id: "",
+      companyName: "",
+      categoryOfDoc: "",
+      publishedYear: "",
+      docName: "",
+      bvd9IdErrorText: "",
+      isSearchEnabled: false,
     };
   }
 
+  validateBvd9Id = (value) => {
+    if (value.match(bvd9IdPattern)) {
+      this.setState({ bvd9IdErrorText: "", isSearchEnabled: true });
+    } else {
+      this.setState({
+        bvd9IdErrorText: "BVD9 ID should be 9 digits",
+        isSearchEnabled: false,
+        isFilterEnabled: false,
+      });
+    }
+  };
+
   handleInputChange = (event) => {
+    if (event.target.name === "bvd9Id") {
+      this.validateBvd9Id(event.target.value);
+    }
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -32,6 +55,20 @@ class TableComponent extends Component {
 
   handleSearch = () => {
     this.setState({ isFilterEnabled: true });
+    console.log("State::>", this.state);
+  };
+
+  handleReset = () => {
+    this.setState({
+      isFilterEnabled: false,
+      bvd9Id: "",
+      companyName: "",
+      categoryOfDoc: "",
+      publishedYear: "",
+      docName: "",
+      bvd9IdErrorText: "",
+      isSearchEnabled: false,
+    });
   };
 
   editableComponent = ({ input, editing, value, ...rest }) => {
@@ -96,6 +133,7 @@ class TableComponent extends Component {
       <span
         style={{
           fontWeight: "bold",
+          fontSize: 18,
         }}
       >
         {name}
@@ -201,11 +239,30 @@ class TableComponent extends Component {
   };
 
   render() {
+    const {
+      bvd9Id,
+      companyName,
+      categoryOfDoc,
+      publishedYear,
+      docName,
+      bvd9IdErrorText,
+      isSearchEnabled,
+    } = this.state;
     return (
       <>
         <Filter
+          formValues={{
+            bvd9Id,
+            companyName,
+            categoryOfDoc,
+            publishedYear,
+            docName,
+          }}
+          bvd9IdErrorText={bvd9IdErrorText}
+          isSearchEnabled={isSearchEnabled}
           handleSearch={this.handleSearch}
           handleInputChange={this.handleInputChange}
+          handleReset={this.handleReset}
         />
         {this.state.isFilterEnabled && (
           <BS.Panel bsStyle="primary">

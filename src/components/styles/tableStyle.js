@@ -27,5 +27,6 @@ export const inputStyle = {
 export const rowStyle = {
   borderRight: "2px solid rgba(0,0,0,0.05)",
   borderLeft: "2px solid rgba(0,0,0,0.02)",
-  overflow: "scroll",
+  overflow: "auto",
+  fontSize: 18,
 };

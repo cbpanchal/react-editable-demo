@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import "react-table/react-table.css";
 import store from "./store";
 import "./index.css";
+import "./components/styles/react-table.css";
 import App from "./App";
 
 ReactDOM.render(

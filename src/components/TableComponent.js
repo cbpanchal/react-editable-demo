@@ -1,77 +1,36 @@
-import React, { Component } from "react";
-import set from "lodash/fp/set";
+import React from "react";
 import { Field } from "redux-form";
 import { Button } from "@material-ui/core";
 import Table from "react-table";
 import * as BS from "react-bootstrap";
-import initialData from "./dataFactory";
+import cloneDeep from "lodash/cloneDeep";
 import FormProvider from "./FormProvider";
 import ActionsCell from "./ActionsCell";
 import HighlightCell from "./HighlightCell";
 import GridFilters from "./GridFilters";
 import Filter from "./Filter/Filter";
+import useTable from "./useTable";
 
 import { headerStyle, rowStyle } from "./styles/tableStyle";
-import { bvd9IdPattern } from "./helper";
 
-class TableComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: initialData,
-      editing: null,
-      deleting: null,
-      isFilterEnabled: false,
-      bvd9Id: "",
-      companyName: "",
-      categoryOfDoc: "",
-      publishedYear: "",
-      docName: "",
-      bvd9IdErrorText: "",
-      isSearchEnabled: false,
-    };
-  }
+const TableComponent = () => {
+  const {
+    data,
+    isFilterEnabled,
+    filters,
+    handleInputChange,
+    handleSearch,
+    handleReset,
+    handleSubmit,
+    rawEditing,
+    rawDeleting,
+    setRawEditing,
+    setRawDeleting,
+    isSearchEnabled,
+    bvd9IdErrorText,
+  } = useTable();
 
-  validateBvd9Id = (value) => {
-    if (value.match(bvd9IdPattern)) {
-      this.setState({ bvd9IdErrorText: "", isSearchEnabled: true });
-    } else {
-      this.setState({
-        bvd9IdErrorText: "BVD9 ID should be 9 digits",
-        isSearchEnabled: false,
-        isFilterEnabled: false,
-      });
-    }
-  };
-
-  handleInputChange = (event) => {
-    if (event.target.name === "bvd9Id") {
-      this.validateBvd9Id(event.target.value);
-    }
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  handleSearch = () => {
-    this.setState({ isFilterEnabled: true });
-    console.log("State::>", this.state);
-  };
-
-  handleReset = () => {
-    this.setState({
-      isFilterEnabled: false,
-      bvd9Id: "",
-      companyName: "",
-      categoryOfDoc: "",
-      publishedYear: "",
-      docName: "",
-      bvd9IdErrorText: "",
-      isSearchEnabled: false,
-    });
-  };
-
-  editableComponent = ({ input, editing, value, ...rest }) => {
+  const editableComponent = ({ input, editing, value, ...rest }) => {
     const Component = editing ? BS.FormControl : BS.FormControl.Static;
     const children =
       (!editing && <HighlightCell value={value} {...rest} />) || undefined;
@@ -88,12 +47,12 @@ class TableComponent extends Component {
     return <Component {...input} children={children} />;
   };
 
-  editableColumnProps = {
+  const editableColumnProps = {
     ...GridFilters,
     Cell: (props) => {
-      const editing = this.state.editing === props.original;
+      const editing = rawEditing === props.original;
       const fieldProps = {
-        component: this.editableComponent,
+        component: editableComponent,
         editing,
         props,
       };
@@ -102,33 +61,33 @@ class TableComponent extends Component {
     },
   };
 
-  getActionProps = (gridState, rowProps) =>
+  const getActionProps = (gridState, rowProps) =>
     (rowProps && {
       mode:
-        this.state.deleting === rowProps.original
+        rawDeleting === rowProps.original
           ? "delete"
-          : this.state.editing === rowProps.original
+          : rawEditing === rowProps.original
           ? "edit"
           : "view",
       actions: {
-        onEdit: () =>
-          this.setState({ editing: rowProps.original }, () =>
-            console.log("editing", this.state.editing)
-          ),
+        onEdit: () => setRawEditing(rowProps.original),
         onDelete: () => {
           console.log(rowProps.original, "rowProps.original");
-          this.setState({ deleting: rowProps.original });
-          let data_ = this.state.data;
-          data_.splice(rowProps.index, 1);
-          console.log("data_", data_);
-          // this.setState({ data: data_ });
+          setRawDeleting(rowProps.original);
+          let _data = cloneDeep(data);
+          _data.splice(rowProps.index, 1);
+          console.log("_data", _data);
+          // setData(_data);
         },
-        onCancel: () => this.setState({ editing: null, deleting: null }),
+        onCancel: () => {
+          setRawDeleting(null);
+          setRawEditing(null);
+        },
       },
     }) ||
     {};
 
-  renderHeader = (name) => {
+  const renderHeader = (name) => {
     return (
       <span
         style={{
@@ -141,12 +100,12 @@ class TableComponent extends Component {
     );
   };
 
-  columns = [
+  const columns = [
     {
       Header: "",
       filterable: false,
       minWidth: 140,
-      getProps: this.getActionProps,
+      getProps: getActionProps,
       Cell: ActionsCell,
       style: {
         display: "flex",
@@ -157,170 +116,146 @@ class TableComponent extends Component {
       },
     },
     {
-      Header: this.renderHeader("BVD9 ID"),
+      Header: renderHeader("BVD9 ID"),
       accessor: "bvd9Id",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("VE ID"),
+      Header: renderHeader("VE ID"),
       accessor: "veId",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Company Name"),
+      Header: renderHeader("Company Name"),
       accessor: "companyName",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Standalone Document"),
+      Header: renderHeader("Standalone Document"),
       accessor: "stdDoc",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Name of Document"),
+      Header: renderHeader("Name of Document"),
       accessor: "nameOfDoc",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Soruce of the Document"),
+      Header: renderHeader("Soruce of the Document"),
       accessor: "sourceOfDoc",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Category of Document"),
+      Header: renderHeader("Category of Document"),
       accessor: "categoryOfDoc",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("URL of Document"),
+      Header: renderHeader("URL of Document"),
       accessor: "urlOfDoc",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Published Year"),
+      Header: renderHeader("Published Year"),
       accessor: "publishedYear",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
     {
-      Header: this.renderHeader("Comments"),
+      Header: renderHeader("Comments"),
       accessor: "comments",
-      ...this.editableColumnProps,
+      ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
     },
   ];
-
-  handleSubmit = (values) => {
-    console.log("values", values);
-    this.setState((state) => {
-      const index = this.state.data.indexOf(this.state.editing);
-      return {
-        data: set(`[${index}]`, values, state.data),
-      };
-    });
-  };
-
-  render() {
-    const {
-      bvd9Id,
-      companyName,
-      categoryOfDoc,
-      publishedYear,
-      docName,
-      bvd9IdErrorText,
-      isSearchEnabled,
-    } = this.state;
-    return (
-      <>
-        <Filter
-          formValues={{
-            bvd9Id,
-            companyName,
-            categoryOfDoc,
-            publishedYear,
-            docName,
-          }}
-          bvd9IdErrorText={bvd9IdErrorText}
-          isSearchEnabled={isSearchEnabled}
-          handleSearch={this.handleSearch}
-          handleInputChange={this.handleInputChange}
-          handleReset={this.handleReset}
-        />
-        {this.state.isFilterEnabled && (
-          <BS.Panel bsStyle="primary">
-            <FormProvider
-              form="inline"
-              onSubmit={this.handleSubmit}
-              onSubmitSuccess={() =>
-                this.setState({ editing: null, deleting: null })
-              }
-              initialValues={this.state.editing}
-              enableReinitialize
+  console.log("data", data);
+  return (
+    <>
+      <Filter
+        formValues={{
+          ...filters,
+        }}
+        bvd9IdErrorText={bvd9IdErrorText}
+        isSearchEnabled={isSearchEnabled}
+        handleSearch={handleSearch}
+        handleInputChange={handleInputChange}
+        handleReset={handleReset}
+      />
+      {isFilterEnabled && (
+        <BS.Panel bsStyle="primary">
+          <FormProvider
+            form="inline"
+            onSubmit={handleSubmit}
+            onSubmitSuccess={() => {
+              setRawEditing(null);
+              setRawDeleting(null);
+            }}
+            initialValues={rawEditing}
+            enableReinitialize
+          >
+            {(formProps) => {
+              return (
+                <form onSubmit={formProps.handleSubmit}>
+                  <Table
+                    columns={columns}
+                    data={data}
+                    defaultPageSize={5}
+                    className="-striped -highlight"
+                    resizable={true}
+                  />
+                </form>
+              );
+            }}
+          </FormProvider>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "20px",
+            }}
+          >
+            <Button
+              type="submit"
+              variant="contained"
+              color="default"
+              style={{ marginRight: 10 }}
             >
-              {(formProps) => {
-                return (
-                  <form onSubmit={formProps.handleSubmit}>
-                    <Table
-                      columns={this.columns}
-                      data={this.state.data}
-                      defaultPageSize={5}
-                      className="-striped -highlight"
-                      resizable={true}
-                    />
-                  </form>
-                );
-              }}
-            </FormProvider>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                padding: "20px",
-              }}
+              Edit All
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ marginRight: 10 }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                color="default"
-                style={{ marginRight: 10 }}
-              >
-                Edit All
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                style={{ marginRight: 10 }}
-              >
-                Save All
-              </Button>
-              <Button type="submit" variant="contained" color="secondary">
-                Submit All
-              </Button>
-            </div>
-          </BS.Panel>
-        )}
-      </>
-    );
-  }
-}
+              Save All
+            </Button>
+            <Button type="submit" variant="contained" color="secondary">
+              Submit All
+            </Button>
+          </div>
+        </BS.Panel>
+      )}
+    </>
+  );
+};
 
 export default TableComponent;

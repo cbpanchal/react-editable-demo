@@ -3,7 +3,6 @@ import { Field } from "redux-form";
 import { Button } from "@material-ui/core";
 import Table from "react-table";
 import * as BS from "react-bootstrap";
-import cloneDeep from "lodash/cloneDeep";
 import FormProvider from "./FormProvider";
 import ActionsCell from "./ActionsCell";
 import HighlightCell from "./HighlightCell";
@@ -74,10 +73,6 @@ const TableComponent = () => {
         onDelete: () => {
           console.log(rowProps.original, "rowProps.original");
           setRawDeleting(rowProps.original);
-          let _data = cloneDeep(data);
-          _data.splice(rowProps.index, 1);
-          console.log("_data", _data);
-          // setData(_data);
         },
         onCancel: () => {
           setRawDeleting(null);
@@ -170,6 +165,19 @@ const TableComponent = () => {
       ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
+      Cell: (e) => (
+        <a
+          onClick={(event) => {
+            event.preventDefault();
+            const { value } = e;
+            console.log("Link clicked!!", value);
+          }}
+          href=""
+          target="_blank"
+        >
+          {e.value}{" "}
+        </a>
+      ),
     },
     {
       Header: renderHeader("Published Year"),
@@ -186,7 +194,7 @@ const TableComponent = () => {
       style: { ...rowStyle },
     },
   ];
-  console.log("data", data);
+
   return (
     <>
       <Filter

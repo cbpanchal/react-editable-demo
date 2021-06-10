@@ -29,4 +29,6 @@ export const rowStyle = {
   borderLeft: "2px solid rgba(0,0,0,0.02)",
   overflow: "auto",
   fontSize: 18,
+  display: "flex",
+  alignItems: "center",
 };

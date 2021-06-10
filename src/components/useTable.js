@@ -69,7 +69,7 @@ function useTable() {
     //   };
     // });
     const operation = rawEditing ? "edit" : "delete";
-    const operationId = rawEditing ? rawEditing.id : rawDeleting.id;
+    const operationId = rawEditing ? rawEditing?.id : rawDeleting?.id;
     let _data = cloneDeep(data);
     const index = _data.findIndex((raw) => raw.id === operationId);
     console.log("index", index);

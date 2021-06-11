@@ -1,6 +1,7 @@
 import React from "react";
 import { Field } from "redux-form";
 import { Button } from "@material-ui/core";
+import Skeleton from "@material-ui/lab/Skeleton";
 import Table from "react-table";
 import * as BS from "react-bootstrap";
 import FormProvider from "./FormProvider";
@@ -10,7 +11,7 @@ import GridFilters from "./GridFilters";
 import Filter from "./Filter/Filter";
 import useTable from "./useTable";
 
-import { headerStyle, rowStyle } from "./styles/tableStyle";
+import { headerStyle, rowStyle, skeletonContainer } from "./styles/tableStyle";
 
 const TableComponent = () => {
   const {
@@ -27,6 +28,7 @@ const TableComponent = () => {
     setRawDeleting,
     isSearchEnabled,
     bvd9IdErrorText,
+    loading,
   } = useTable();
 
   const editableComponent = ({ input, editing, value, ...rest }) => {
@@ -195,6 +197,26 @@ const TableComponent = () => {
     },
   ];
 
+  const tableData = React.useMemo(
+    () => (loading ? Array(5).fill({}) : data),
+    [loading, data]
+  );
+
+  const tableColumns = React.useMemo(
+    () =>
+      loading
+        ? columns.map((column) => ({
+            ...column,
+            Cell: (
+              <div style={{ ...skeletonContainer }}>
+                <Skeleton width={100} />
+              </div>
+            ),
+          }))
+        : columns,
+    [loading, columns]
+  );
+
   return (
     <>
       <Filter
@@ -223,8 +245,8 @@ const TableComponent = () => {
               return (
                 <form onSubmit={formProps.handleSubmit}>
                   <Table
-                    columns={columns}
-                    data={data}
+                    columns={tableColumns}
+                    data={tableData}
                     defaultPageSize={5}
                     className="-striped -highlight"
                     resizable={true}

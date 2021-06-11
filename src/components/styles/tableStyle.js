@@ -27,8 +27,14 @@ export const inputStyle = {
 export const rowStyle = {
   borderRight: "2px solid rgba(0,0,0,0.05)",
   borderLeft: "2px solid rgba(0,0,0,0.02)",
-  overflow: "auto",
   fontSize: 18,
   display: "flex",
+  alignItems: "center",
+};
+
+export const skeletonContainer = {
+  height: 50,
+  display: "flex",
+  justifyContent: "flex-start",
   alignItems: "center",
 };

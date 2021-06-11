@@ -12,6 +12,8 @@ function useTable() {
   const [isSearchEnabled, setIsSearchEnabled] = useState("");
   const [bvd9IdErrorText, setBvd9IdErrorText] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const [filters, setFilters] = React.useState({
     bvd9Id: "",
     companyName: "",
@@ -44,6 +46,10 @@ function useTable() {
 
   const handleSearch = () => {
     setIsFilterEnabled(true);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   };
 
   const handleReset = () => {
@@ -98,6 +104,7 @@ function useTable() {
     setRawDeleting,
     isSearchEnabled,
     bvd9IdErrorText,
+    loading,
   };
 }
 

@@ -1,4 +1,4 @@
-import HighlightCell from './HighlightCell';
+import HighlightCell from "./HighlightCell";
 
 function containsInsensitive(filter, row) {
   return (
@@ -11,6 +11,7 @@ function getFiltered(gridState) {
   return { filtered: gridState.filtered };
 }
 
+// eslint-disable-next-line
 export default {
   Cell: HighlightCell,
   filterMethod: containsInsensitive,

@@ -12,6 +12,7 @@ import Filter from "./Filter/Filter";
 import useTable from "./useTable";
 
 import { headerStyle, rowStyle, skeletonContainer } from "./styles/tableStyle";
+import Modal from "./Modal/Modal";
 
 const TableComponent = () => {
   const {
@@ -29,6 +30,8 @@ const TableComponent = () => {
     isSearchEnabled,
     bvd9IdErrorText,
     loading,
+    isModalOpen,
+    setModalOpen,
   } = useTable();
 
   const editableComponent = ({ input, editing, value, ...rest }) => {
@@ -97,6 +100,7 @@ const TableComponent = () => {
     );
   };
 
+  // eslint-disable-next-line
   const columns = [
     {
       Header: "",
@@ -168,6 +172,7 @@ const TableComponent = () => {
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
       Cell: (e) => (
+        // eslint-disable-next-line
         <a
           onClick={(event) => {
             event.preventDefault();
@@ -284,6 +289,7 @@ const TableComponent = () => {
           </div>
         </BS.Panel>
       )}
+      <Modal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
     </>
   );
 };

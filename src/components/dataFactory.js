@@ -157,4 +157,63 @@ const initialData = [
   },
 ];
 
-export default initialData;
+const categoryOfDocumentItems = [
+  {
+    title: "Annual Report",
+    value: "Annual Report",
+  },
+  {
+    title: "Anti-Corruption",
+    value: "Anti-Corruption",
+  },
+  {
+    title: "Code of Ethiics and Business conduct & Advertisings",
+    value: "Code of Ethiics and Business conduct & Advertisings",
+  },
+  {
+    title: "Corporate governance report & charter",
+    value: "Corporate governance report & charter",
+  },
+  {
+    title: "Diversity Report",
+    value: "Diversity Report",
+  },
+  {
+    title: "Fiscal Contribution",
+    value: "Fiscal Contribution",
+  },
+  {
+    title: "Forest Policy",
+    value: "Forest Policy",
+  },
+  {
+    title: "Health and Safety",
+    value: "Health and Safety",
+  },
+  {
+    title: "Human Right",
+    value: "Human Right",
+  },
+  {
+    title: "Other",
+    value: "Other",
+  },
+  {
+    title: "Sustainability Plan",
+    value: "Sustainability Plan",
+  },
+  {
+    title: "Sustainability Report",
+    value: "Sustainability Report",
+  },
+  {
+    title: "Technology",
+    value: "Technology",
+  },
+  {
+    title: "Whistlerblower Policy",
+    value: "Whistlerblower Policy",
+  },
+];
+
+export { categoryOfDocumentItems, initialData };

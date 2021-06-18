@@ -1,10 +1,12 @@
 import React from "react";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Input from "../Fields/Input";
+import Select from "../Fields/Select";
+import { categoryOfDocumentItems } from "../dataFactory";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   filterContainer: {
     padding: "30px 0",
   },
@@ -12,6 +14,11 @@ const useStyles = makeStyles(() => ({
     margin: 20,
     display: "flex",
     alignItems: "center",
+  },
+  formControl: {
+    minWidth: 215,
+    marginTop: 8,
+    marginRight: 20,
   },
   textField: {
     marginRight: 20,
@@ -45,9 +52,7 @@ const Filter = ({
         Filters
       </Typography>
       <form noValidate autoComplete="off" className={classes.form}>
-        <TextField
-          className={classes.textField}
-          id="outlined-basic"
+        <Input
           label="BVD9 ID"
           name="bvd9Id"
           value={bvd9Id}
@@ -55,48 +60,47 @@ const Filter = ({
           type="number"
           error={error}
           helperText={bvd9IdErrorText}
-          onChange={handleInputChange}
+          handleInputChange={handleInputChange}
           onInput={(e) => {
             e.target.value = Math.max(0, parseInt(e.target.value))
               .toString()
               .slice(0, 9);
           }}
         />
-        <TextField
+        <Input
           className={classes.textField}
           id="outlined-basic"
           label="Company Name"
           name="companyName"
           value={companyName}
           variant="outlined"
-          onChange={handleInputChange}
+          handleInputChange={handleInputChange}
         />
-        <TextField
-          className={classes.textField}
-          id="outlined-basic"
-          label="Category of Document"
-          name="categoryOfDoc"
+        <Select
+          inputLabel="Category of Document"
           value={categoryOfDoc}
-          variant="outlined"
-          onChange={handleInputChange}
+          name="categoryOfDoc"
+          label="Category of Document"
+          menuItems={categoryOfDocumentItems}
+          handleInputChange={handleInputChange}
         />
-        <TextField
+        <Input
           className={classes.textField}
           id="outlined-basic"
           label="Published Year"
           name="publishedYear"
           value={publishedYear}
           variant="outlined"
-          onChange={handleInputChange}
+          handleInputChange={handleInputChange}
         />
-        <TextField
+        <Input
           className={classes.textField}
           id="outlined-basic"
           label="Document Name"
           name="docName"
           value={docName}
           variant="outlined"
-          onChange={handleInputChange}
+          handleInputChange={handleInputChange}
         />
       </form>
       <Button

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import set from "lodash/fp/set";
 import cloneDeep from "lodash/cloneDeep";
+import isEmpty from "lodash/isEmpty";
 import { bvd9IdPattern } from "./helper";
-import initialData from "./dataFactory";
+import { initialData } from "./dataFactory";
 
 function useTable() {
   const [data, setData] = useState(initialData);
+  const [isModalOpen, setModalOpen] = useState(false);
   const [rawEditing, setRawEditing] = useState(null);
   const [rawDeleting, setRawDeleting] = useState(null);
   const [isFilterEnabled, setIsFilterEnabled] = useState(false);
@@ -38,6 +39,11 @@ function useTable() {
     if (event.target.name === "bvd9Id") {
       validateBvd9Id(value);
     }
+    if (event.target.name === "categoryOfDoc") {
+      if (value) {
+        setIsSearchEnabled(true);
+      }
+    }
     setFilters({
       ...filters,
       [event.target.name]: value,
@@ -45,6 +51,11 @@ function useTable() {
   };
 
   const handleSearch = () => {
+    const { bvd9Id, categoryOfDoc } = filters;
+    if (!isEmpty(bvd9Id) && !isEmpty(categoryOfDoc)) {
+      setModalOpen(true);
+      return;
+    }
     setIsFilterEnabled(true);
     setLoading(true);
     setTimeout(() => {
@@ -105,6 +116,8 @@ function useTable() {
     isSearchEnabled,
     bvd9IdErrorText,
     loading,
+    isModalOpen,
+    setModalOpen,
   };
 }
 

@@ -176,8 +176,9 @@ const TableComponent = () => {
         <a
           onClick={(event) => {
             event.preventDefault();
-            const { value } = e;
+            const { value, row } = e;
             console.log("Link clicked!!", value);
+            console.log("raw", row);
           }}
           href=""
           target="_blank"

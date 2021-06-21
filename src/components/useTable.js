@@ -29,10 +29,14 @@ function useTable() {
       setIsSearchEnabled(true);
     } else {
       setBvd9IdErrorText("BVD9 ID should be 9 digits");
-      setIsSearchEnabled(false);
+      setIsSearchEnabled(isCategoryOfDocuments ? true : false);
       setIsFilterEnabled(false);
     }
   };
+
+  const isCategoryOfDocuments = !isEmpty(filters.categoryOfDoc);
+
+  const hasBvd9Error = bvd9IdErrorText.length > 0;
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -40,8 +44,14 @@ function useTable() {
       validateBvd9Id(value);
     }
     if (event.target.name === "categoryOfDoc") {
-      if (value) {
+      if (!isEmpty(value)) {
         setIsSearchEnabled(true);
+      } else {
+        if (!hasBvd9Error && isEmpty(value)) {
+          setIsSearchEnabled(true);
+        } else {
+          setIsSearchEnabled(false);
+        }
       }
     }
     setFilters({
@@ -51,10 +61,15 @@ function useTable() {
   };
 
   const handleSearch = () => {
-    const { bvd9Id, categoryOfDoc } = filters;
-    if (!isEmpty(bvd9Id) && !isEmpty(categoryOfDoc)) {
+    const { bvd9Id } = filters;
+    if (!isEmpty(bvd9Id) && !hasBvd9Error && isCategoryOfDocuments) {
       setModalOpen(true);
       return;
+    }
+    if (hasBvd9Error) {
+      console.log("Search with Category of Document");
+    } else {
+      console.log("Search with BVD9ID");
     }
     setIsFilterEnabled(true);
     setLoading(true);
@@ -79,12 +94,6 @@ function useTable() {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    // this.setState((state) => {
-    //   const index = this.state.data.indexOf(this.state.editing);
-    //   return {
-    //     data: set(`[${index}]`, values, state.data),
-    //   };
-    // });
     const operation = rawEditing ? "edit" : "delete";
     const operationId = rawEditing ? rawEditing?.id : rawDeleting?.id;
     let _data = cloneDeep(data);

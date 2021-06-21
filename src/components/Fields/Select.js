@@ -7,8 +7,11 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     minWidth: 215,
-    marginTop: 8,
+    marginTop: 16,
     marginRight: 20,
+  },
+  select: {
+    "& .MuiSvgIcon-root": {},
   },
 }));
 
@@ -30,6 +33,7 @@ const SelectComponent = ({
         labelId="demo-simple-select-outlined-label"
         id="demo-simple-select-outlined"
         value={value}
+        className={classes.select}
         name={name}
         onChange={handleInputChange}
         label={label}

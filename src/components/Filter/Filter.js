@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "../Fields/Input";
 import Select from "../Fields/Select";
-import { categoryOfDocumentItems } from "../dataFactory";
+import { categoryOfDocumentItems, publishedYearItems } from "../dataFactory";
 
 const useStyles = makeStyles((theme) => ({
   filterContainer: {
@@ -92,13 +92,12 @@ const Filter = ({
             />
           </Grid>
           <Grid item>
-            <Input
-              className={classes.textField}
-              id="outlined-basic"
-              label="Published Year"
-              name="publishedYear"
+            <Select
+              inputLabel="Published Year"
               value={publishedYear}
-              variant="outlined"
+              name="publishedYear"
+              label="Published Year"
+              menuItems={publishedYearItems}
               handleInputChange={handleInputChange}
             />
           </Grid>

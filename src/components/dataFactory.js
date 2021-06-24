@@ -216,4 +216,31 @@ const categoryOfDocumentItems = [
   },
 ];
 
-export { categoryOfDocumentItems, initialData };
+const publishedYearItems = [
+  {
+    title: "1980",
+    value: "1980",
+  },
+  {
+    title: "2000",
+    value: "2000",
+  },
+  {
+    title: "2001",
+    value: "2001",
+  },
+  {
+    title: "2002",
+    value: "2002",
+  },
+  {
+    title: "2003",
+    value: "2003",
+  },
+  {
+    title: "2005",
+    value: "2005",
+  },
+];
+
+export { categoryOfDocumentItems, initialData, publishedYearItems };

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
-import { bvd9IdPattern } from "./helper";
+import pickBy from "lodash/pickBy";
+import identity from "lodash/identity";
+import { bvd9IdPattern, searchParams } from "./helper";
 import { initialData } from "./dataFactory";
 
 function useTable() {
@@ -28,22 +30,39 @@ function useTable() {
       setBvd9IdErrorText("");
       setIsSearchEnabled(true);
     } else {
-      setBvd9IdErrorText("BVD9 ID should be 9 digits");
-      setIsSearchEnabled(isCategoryOfDocuments ? true : false);
+      if (!isEmpty(value)) {
+        setBvd9IdErrorText("BVD9 ID should be 9 digits");
+      } else {
+        setBvd9IdErrorText("");
+      }
+      setIsSearchEnabled(
+        isCategoryOfDocuments || isPublishedYear ? true : false
+      );
       setIsFilterEnabled(false);
     }
   };
 
   const isCategoryOfDocuments = !isEmpty(filters.categoryOfDoc);
 
+  const isPublishedYear = !isEmpty(filters.publishedYear);
+
   const hasBvd9Error = bvd9IdErrorText.length > 0;
+
+  const searchFilterLength = Object.values(filters).filter(
+    (item) => !isEmpty(item)
+  ).length;
+
+  const shouldSearch = searchFilterLength === 1;
 
   const handleInputChange = (event) => {
     const value = event.target.value;
     if (event.target.name === "bvd9Id") {
       validateBvd9Id(value);
     }
-    if (event.target.name === "categoryOfDoc") {
+    if (
+      event.target.name === "categoryOfDoc" ||
+      event.target.name === "publishedYear"
+    ) {
       if (!isEmpty(value)) {
         setIsSearchEnabled(true);
       } else {
@@ -54,6 +73,9 @@ function useTable() {
         }
       }
     }
+    if (searchFilterLength) {
+      setIsSearchEnabled(true);
+    }
     setFilters({
       ...filters,
       [event.target.name]: value,
@@ -61,16 +83,12 @@ function useTable() {
   };
 
   const handleSearch = () => {
-    const { bvd9Id } = filters;
-    if (!isEmpty(bvd9Id) && !hasBvd9Error && isCategoryOfDocuments) {
+    if (!shouldSearch) {
       setModalOpen(true);
       return;
     }
-    if (hasBvd9Error) {
-      console.log("Search with Category of Document");
-    } else {
-      console.log("Search with BVD9ID");
-    }
+    const params = pickBy({ ...searchParams, ...filters }, identity);
+    console.log("params", params);
     setIsFilterEnabled(true);
     setLoading(true);
     setTimeout(() => {

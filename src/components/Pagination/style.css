@@ -1,0 +1,72 @@
+.Table__pagination {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  background: #f5f4f6;
+}
+
+.Table__showingResultWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Table__showingText {
+  color: #737274;
+}
+
+.Table_totalText {
+  color: #555455;
+}
+
+.Table__prevPageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Table__pageButton {
+  font-size: 15px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.Table__pageButton:disabled {
+  cursor: not-allowed;
+  color: gray;
+}
+
+.Table__pageButton--active {
+  color: #45b3e3;
+  font-weight: bold;
+}
+
+.Table__inputField {
+  width: 50px;
+  color: #5ecfeb;
+  border: none;
+  font-size: 15px;
+  height: 24px;
+}
+
+.Table__visiblePagesWrapper {
+  padding: 0 10px;
+}
+
+.Table__ofText {
+  padding: 0 5px;
+}
+
+.Table__rowsText {
+  padding: 0 10px;
+}
+
+.Table__pageSelect {
+  margin: 0 10px;
+}
+
+.Table__arrowIcon {
+  font-size: 1.1rem;
+}

@@ -13,6 +13,7 @@ import useTable from "./useTable";
 
 import { headerStyle, rowStyle, skeletonContainer } from "./styles/tableStyle";
 import Modal from "./Modal/Modal";
+import Pagination from "./Pagination/Pagination";
 
 const TableComponent = () => {
   const {
@@ -256,6 +257,9 @@ const TableComponent = () => {
                     defaultPageSize={5}
                     className="-striped -highlight"
                     resizable={true}
+                    showPaginationTop={true}
+                    showPaginationBottom={false}
+                    PaginationComponent={Pagination}
                   />
                 </form>
               );

@@ -1,19 +1,24 @@
 import React from "react";
 import { Field } from "redux-form";
-import { Button } from "@material-ui/core";
 import Skeleton from "@material-ui/lab/Skeleton";
-import Table from "react-table";
+import SaveAlt from "@material-ui/icons/SaveAlt";
+import Checkbox from "@material-ui/core/Checkbox";
 import * as BS from "react-bootstrap";
-import FormProvider from "./FormProvider";
 import ActionsCell from "./ActionsCell";
 import HighlightCell from "./HighlightCell";
 import GridFilters from "./GridFilters";
-import Filter from "./Filter/Filter";
 import useTable from "./useTable";
-
-import { headerStyle, rowStyle, skeletonContainer } from "./styles/tableStyle";
+import {
+  headerStyle,
+  rowStyle,
+  selectAllHeader,
+  skeletonContainer,
+} from "./styles/tableStyle";
 import Modal from "./Modal/Modal";
-import Pagination from "./Pagination/Pagination";
+import { lazyComponent } from "../helpers/misc";
+
+const Filter = lazyComponent(() => import("./Filter"));
+const Table = lazyComponent(() => import("./Table"));
 
 const TableComponent = () => {
   const {
@@ -33,22 +38,14 @@ const TableComponent = () => {
     loading,
     isModalOpen,
     setModalOpen,
+    selectedRows,
+    handleSelection,
   } = useTable();
 
   const editableComponent = ({ input, editing, value, ...rest }) => {
     const Component = editing ? BS.FormControl : BS.FormControl.Static;
     const children =
       (!editing && <HighlightCell value={value} {...rest} />) || undefined;
-    // const children =
-    //   (editing && (
-    //     <TextField
-    //       defaultValue={value}
-    //       margin="normal"
-    //       variant="outlined"
-    //       {...rest}
-    //     />
-    //   )) ||
-    //   undefined;
     return <Component {...input} children={children} />;
   };
 
@@ -84,15 +81,37 @@ const TableComponent = () => {
           setRawDeleting(null);
           setRawEditing(null);
         },
+        onSelection: () => {
+          console.log("onSelection", rowProps.original);
+          handleSelection(rowProps.original.id);
+        },
+        onDownload: () => {
+          // call download handler here
+          // handleDownload(rowProps.original.id);
+        },
+        checkedRow: selectedRows.includes(rowProps.original.id),
       },
     }) ||
     {};
+
+  const renderSelectAllHeader = () => {
+    return (
+      <div style={{ ...selectAllHeader }}>
+        <Checkbox
+          color="primary"
+          inputProps={{ "aria-label": "secondary checkbox" }}
+          onChange={() => {}}
+        />
+        <SaveAlt size="small" />
+      </div>
+    );
+  };
 
   const renderHeader = (name) => {
     return (
       <span
         style={{
-          fontWeight: "bold",
+          color: "#A1A1A2",
           fontSize: 18,
         }}
       >
@@ -104,7 +123,8 @@ const TableComponent = () => {
   // eslint-disable-next-line
   const columns = [
     {
-      Header: "",
+      Header: renderSelectAllHeader,
+      sortable: false,
       filterable: false,
       minWidth: 140,
       getProps: getActionProps,
@@ -227,9 +247,7 @@ const TableComponent = () => {
   return (
     <>
       <Filter
-        formValues={{
-          ...filters,
-        }}
+        filters={filters}
         bvd9IdErrorText={bvd9IdErrorText}
         isSearchEnabled={isSearchEnabled}
         handleSearch={handleSearch}
@@ -237,62 +255,14 @@ const TableComponent = () => {
         handleReset={handleReset}
       />
       {isFilterEnabled && (
-        <BS.Panel bsStyle="primary">
-          <FormProvider
-            form="inline"
-            onSubmit={handleSubmit}
-            onSubmitSuccess={() => {
-              setRawEditing(null);
-              setRawDeleting(null);
-            }}
-            initialValues={rawEditing}
-            enableReinitialize
-          >
-            {(formProps) => {
-              return (
-                <form onSubmit={formProps.handleSubmit}>
-                  <Table
-                    columns={tableColumns}
-                    data={tableData}
-                    defaultPageSize={5}
-                    className="-striped -highlight"
-                    resizable={true}
-                    showPaginationTop={true}
-                    showPaginationBottom={false}
-                    PaginationComponent={Pagination}
-                  />
-                </form>
-              );
-            }}
-          </FormProvider>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              padding: "20px",
-            }}
-          >
-            <Button
-              type="submit"
-              variant="contained"
-              color="default"
-              style={{ marginRight: 10 }}
-            >
-              Edit All
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              style={{ marginRight: 10 }}
-            >
-              Save All
-            </Button>
-            <Button type="submit" variant="contained" color="secondary">
-              Submit All
-            </Button>
-          </div>
-        </BS.Panel>
+        <Table
+          handleSubmit={handleSubmit}
+          setRawEditing={setRawEditing}
+          setRawDeleting={setRawDeleting}
+          rawEditing={rawEditing}
+          tableColumns={tableColumns}
+          tableData={tableData}
+        />
       )}
       <Modal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
     </>

@@ -14,6 +14,7 @@ function useTable() {
   const [isFilterEnabled, setIsFilterEnabled] = useState(false);
   const [isSearchEnabled, setIsSearchEnabled] = useState("");
   const [bvd9IdErrorText, setBvd9IdErrorText] = useState("");
+  const [selectedRows, setSelectedRow] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +50,7 @@ function useTable() {
   const hasBvd9Error = bvd9IdErrorText.length > 0;
 
   const searchFilterLength = Object.values(filters).filter(
-    (item) => !isEmpty(item)
+    (item) => !isEmpty(item) && !hasBvd9Error
   ).length;
 
   const shouldSearch = searchFilterLength === 1;
@@ -83,6 +84,8 @@ function useTable() {
   };
 
   const handleSearch = () => {
+    console.log("shouldSearch", shouldSearch);
+    console.log("searchFilterLength", searchFilterLength);
     if (!shouldSearch) {
       setModalOpen(true);
       return;
@@ -108,6 +111,14 @@ function useTable() {
       publishedYear: "",
       docName: "",
     });
+  };
+
+  const handleSelection = (id) => {
+    if (selectedRows.includes(id)) {
+      setSelectedRow(selectedRows.filter((row) => row !== id));
+    } else {
+      setSelectedRow([...selectedRows, id]);
+    }
   };
 
   const handleSubmit = (values) => {
@@ -145,6 +156,9 @@ function useTable() {
     loading,
     isModalOpen,
     setModalOpen,
+    setSelectedRow,
+    selectedRows,
+    handleSelection,
   };
 }
 

@@ -3,9 +3,11 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import Input from "../Fields/Input";
-import Select from "../Fields/Select";
-import { categoryOfDocumentItems, publishedYearItems } from "../dataFactory";
+import Bvd9Id from "./Bvd9Id";
+import CompanyName from "./CompanyName";
+import CategoryOfDocument from "./CategoryOfDocument";
+import PublishedYear from "./PublishedYear";
+import DocumentName from "./DocumentName";
 
 const useStyles = makeStyles((theme) => ({
   filterContainer: {
@@ -54,61 +56,36 @@ const Filter = ({
       <form noValidate autoComplete="off" className={classes.form}>
         <Grid container>
           <Grid item>
-            <Input
-              label="BVD9 ID"
-              name="bvd9Id"
-              value={bvd9Id}
-              variant="outlined"
-              type="number"
+            <Bvd9Id
+              bvd9Id={bvd9Id}
               error={error}
-              helperText={bvd9IdErrorText}
+              bvd9IdErrorText={bvd9IdErrorText}
               handleInputChange={handleInputChange}
-              onInput={(e) => {
-                e.target.value = Math.max(0, parseInt(e.target.value))
-                  .toString()
-                  .slice(0, 9);
-              }}
             />
           </Grid>
           <Grid item>
-            <Input
+            <CompanyName
               className={classes.textField}
-              id="outlined-basic"
-              label="Company Name"
-              name="companyName"
-              value={companyName}
-              variant="outlined"
+              companyName={companyName}
               handleInputChange={handleInputChange}
             />
           </Grid>
           <Grid item>
-            <Select
-              inputLabel="Category of Document"
-              value={categoryOfDoc}
-              name="categoryOfDoc"
-              label="Category of Document"
-              menuItems={categoryOfDocumentItems}
+            <CategoryOfDocument
+              categoryOfDoc={categoryOfDoc}
               handleInputChange={handleInputChange}
             />
           </Grid>
           <Grid item>
-            <Select
-              inputLabel="Published Year"
-              value={publishedYear}
-              name="publishedYear"
-              label="Published Year"
-              menuItems={publishedYearItems}
+            <PublishedYear
+              publishedYear={publishedYear}
               handleInputChange={handleInputChange}
             />
           </Grid>
           <Grid item>
-            <Input
+            <DocumentName
               className={classes.textField}
-              id="outlined-basic"
-              label="Document Name"
-              name="docName"
-              value={docName}
-              variant="outlined"
+              docName={docName}
               handleInputChange={handleInputChange}
             />
           </Grid>

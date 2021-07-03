@@ -1,6 +1,4 @@
 export const headerStyle = {
-  borderRight: "2px solid rgba(0,0,0,0.05)",
-  borderLeft: "2px solid rgba(0,0,0,0.02)",
   padding: "10px",
 };
 
@@ -14,8 +12,6 @@ export const inputStyle = {
   color: "#555",
   backgroundColor: "#fff",
   backgroundImage: "none",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
   WebkitBoxShadow: "inset 0 1px 1px rgb(0 0 0 / 8%)",
   boxShadow: "inset 0 1px 1px rgb(0 0 0 / 8%)",
   WebkitTransition:
@@ -25,8 +21,6 @@ export const inputStyle = {
 };
 
 export const rowStyle = {
-  borderRight: "2px solid rgba(0,0,0,0.05)",
-  borderLeft: "2px solid rgba(0,0,0,0.02)",
   fontSize: 18,
   display: "flex",
   alignItems: "center",
@@ -36,5 +30,11 @@ export const skeletonContainer = {
   height: 50,
   display: "flex",
   justifyContent: "flex-start",
+  alignItems: "center",
+};
+
+export const selectAllHeader = {
+  display: "flex",
+  justifyContent: "space-around",
   alignItems: "center",
 };

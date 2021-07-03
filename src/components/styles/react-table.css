@@ -50,3 +50,23 @@
 .ReactTable .rt-tbody .rt-td:hover {
   overflow: auto;
 }
+
+.ReactTable .rt-thead.-header {
+  box-shadow: none;
+  border-bottom: 1px solid #000;
+}
+
+.ReactTable .rt-thead .rt-tr {
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReactTable .rt-thead .rt-th,
+.ReactTable .rt-thead .rt-td {
+  border: none;
+}
+
+.ReactTable .rt-tbody .rt-td {
+  border: none;
+}

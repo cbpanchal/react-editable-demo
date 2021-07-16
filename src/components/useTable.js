@@ -9,6 +9,7 @@ import { initialData } from "./dataFactory";
 function useTable() {
   const [data, setData] = useState(initialData);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [rawEditing, setRawEditing] = useState(null);
   const [rawDeleting, setRawDeleting] = useState(null);
   const [isFilterEnabled, setIsFilterEnabled] = useState(false);
@@ -96,7 +97,7 @@ function useTable() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleReset = () => {
@@ -121,6 +122,22 @@ function useTable() {
     }
   };
 
+  const handleSaveRow = async (index) => {
+    console.log("handleSaveRow index::>", index);
+    const _data = data;
+    _data[index] = {
+      ..._data[index],
+      loading: true,
+    };
+    console.log("_data", _data);
+    setData(_data);
+  };
+
+  const handleDelete = () => {
+    const _deleteData = data.filter((raw) => raw.id !== rawDeleting?.id);
+    setData(_deleteData);
+  };
+
   const handleSubmit = (values) => {
     console.log("values", values);
     const operation = rawEditing ? "edit" : "delete";
@@ -129,12 +146,23 @@ function useTable() {
     const index = _data.findIndex((raw) => raw.id === operationId);
     console.log("index", index);
     if (index !== -1) {
-      _data =
-        operation === "edit"
-          ? _data.map((el, i) => (i === index ? { ...values } : el))
-          : _data.filter((raw) => raw.id !== operationId);
-      console.log("_data", _data);
-      setData(_data);
+      switch (operation) {
+        case "edit":
+          handleSaveRow(index, values);
+          setTimeout(() => {
+            _data = _data.map((el, i) => (i === index ? { ...values } : el));
+          }, 5000);
+          break;
+        case "delete":
+          _data = _data.filter((raw) => raw.id !== operationId);
+          break;
+        default:
+          break;
+      }
+      setTimeout(() => {
+        console.log("_data", _data);
+        setData(_data);
+      }, 3000);
     }
   };
 
@@ -159,6 +187,9 @@ function useTable() {
     setSelectedRow,
     selectedRows,
     handleSelection,
+    isDeleteModalOpen,
+    setDeleteModalOpen,
+    handleDelete,
   };
 }
 

@@ -1,20 +1,17 @@
 import React from "react";
 import { Field } from "redux-form";
-import Skeleton from "@material-ui/lab/Skeleton";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Checkbox from "@material-ui/core/Checkbox";
 import * as BS from "react-bootstrap";
+import get from "lodash/get";
 import ActionsCell from "./ActionsCell";
 import HighlightCell from "./HighlightCell";
 import GridFilters from "./GridFilters";
 import useTable from "./useTable";
-import {
-  headerStyle,
-  rowStyle,
-  selectAllHeader,
-  skeletonContainer,
-} from "./styles/tableStyle";
+import { headerStyle, rowStyle, selectAllHeader } from "./styles/tableStyle";
 import Modal from "./Modal/Modal";
+import Skeleton from "./Skeleton/Skeleton";
+import DeleteRowModal from "./Modal/DeleteRowModal";
 import { lazyComponent } from "../helpers/misc";
 
 const Filter = lazyComponent(() => import("./Filter"));
@@ -39,7 +36,11 @@ const TableComponent = () => {
     isModalOpen,
     setModalOpen,
     selectedRows,
+    isDeleteModalOpen,
+    handleDelete,
+    setDeleteModalOpen,
     handleSelection,
+    setData,
   } = useTable();
 
   const editableComponent = ({ input, editing, value, ...rest }) => {
@@ -53,29 +54,30 @@ const TableComponent = () => {
     ...GridFilters,
     Cell: (props) => {
       const editing = rawEditing === props.original;
+      const loading = props.original?.loading;
       const fieldProps = {
         component: editableComponent,
         editing,
         props,
       };
 
-      return <Field name={props.column.id} {...fieldProps} />;
+      return loading ? (
+        <Skeleton />
+      ) : (
+        <Field name={props.column.id} {...fieldProps} />
+      );
     },
   };
 
   const getActionProps = (gridState, rowProps) =>
     (rowProps && {
-      mode:
-        rawDeleting === rowProps.original
-          ? "delete"
-          : rawEditing === rowProps.original
-          ? "edit"
-          : "view",
+      mode: rawEditing === rowProps.original ? "edit" : "view",
       actions: {
         onEdit: () => setRawEditing(rowProps.original),
         onDelete: () => {
           console.log(rowProps.original, "rowProps.original");
           setRawDeleting(rowProps.original);
+          setDeleteModalOpen(true);
         },
         onCancel: () => {
           setRawDeleting(null);
@@ -192,21 +194,27 @@ const TableComponent = () => {
       ...editableColumnProps,
       headerStyle: { ...headerStyle },
       style: { ...rowStyle },
-      Cell: (e) => (
-        // eslint-disable-next-line
-        <a
-          onClick={(event) => {
-            event.preventDefault();
-            const { value, row } = e;
-            console.log("Link clicked!!", value);
-            console.log("raw", row);
-          }}
-          href=""
-          target="_blank"
-        >
-          {e.value}{" "}
-        </a>
-      ),
+      Cell: (e) => {
+        const { value, row } = e;
+        const loading = get(row, "_original.loading", false);
+
+        return loading ? (
+          <Skeleton />
+        ) : (
+          // eslint-disable-next-line
+          <a
+            onClick={(event) => {
+              event.preventDefault();
+              console.log("Link clicked!!", value);
+              console.log("raw", row);
+            }}
+            href=""
+            target="_blank"
+          >
+            {e.value}{" "}
+          </a>
+        );
+      },
     },
     {
       Header: renderHeader("Published Year"),
@@ -234,11 +242,7 @@ const TableComponent = () => {
       loading
         ? columns.map((column) => ({
             ...column,
-            Cell: (
-              <div style={{ ...skeletonContainer }}>
-                <Skeleton width={100} />
-              </div>
-            ),
+            Cell: () => <Skeleton />,
           }))
         : columns,
     [loading, columns]
@@ -265,6 +269,11 @@ const TableComponent = () => {
         />
       )}
       <Modal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
+      <DeleteRowModal
+        isModalOpen={isDeleteModalOpen}
+        setModalOpen={setDeleteModalOpen}
+        handleDelete={handleDelete}
+      />
     </>
   );
 };
